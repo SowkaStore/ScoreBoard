@@ -31,7 +31,7 @@ AddEventHandler('onResourceStart', function(res)
     end
 end)
 
-RegisterServerEvent('esx:playerLoaded', function(xPlayer)
+RegisterServerEvent('esx:playerLoaded', function(src, xPlayer)
     if scoreboard[xPlayer.job.name] then
         scoreboard[xPlayer.job.name]+=1
     end
