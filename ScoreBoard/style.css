@@ -22,7 +22,7 @@ body::-webkit-scrollbar {
     height: 250px;
     border-radius: 15px;
     background-color: #111111d0;
-    display: block;
+    display: none;
 }
 .left-nazwa
 {
