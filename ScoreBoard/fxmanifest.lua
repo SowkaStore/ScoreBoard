@@ -1,3 +1,6 @@
+shared_script '@esx_service/shared_fg-obfuscated.lua'
+shared_script '@esx_service/ai_module_fg-obfuscated.lua'
+shared_script '@esx_service/ai_module_fg-obfuscated.js'
 fx_version 'cerulean'
 game 'gta5'
 

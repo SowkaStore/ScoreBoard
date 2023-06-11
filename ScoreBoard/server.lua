@@ -1,4 +1,5 @@
-ESX = exports['es_extended']:getSharedObject()
+ESX = nil
+TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
 scoreboard = {
     ['police'] = 0,
@@ -14,6 +15,7 @@ RegisterServerEvent('esx:setJob', function(source, job, last)
 
     if scoreboard[last.name] ~= nil then
         scoreboard[last.name]-=1
+        if scoreboard[last.name] < 0 then scoreboard[last.name] = 0 end
     end
 end)
 
@@ -31,7 +33,7 @@ AddEventHandler('onResourceStart', function(res)
     end
 end)
 
-RegisterServerEvent('esx:playerLoaded', function(src, xPlayer)
+RegisterServerEvent('esx:playerLoaded', function(id, xPlayer)
     if scoreboard[xPlayer.job.name] then
         scoreboard[xPlayer.job.name]+=1
     end
@@ -45,6 +47,7 @@ AddEventHandler('playerDropped', function()
         scoreboard[xPlayer.job.name]-=1
     end
     scoreboard['players']-=1
+    if scoreboard['players'] < 0 then scoreboard['players'] = 0 end
 end)
 
 ESX.RegisterServerCallback('rc_scoreboard:getData', function(source, cb)

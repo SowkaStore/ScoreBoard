@@ -22,6 +22,12 @@ window.addEventListener('message', (e) => {
             $("#playerid").html(data.data['id'])
             $("#player-job").html(data.data['job'])
             $("#player-label").html(data.data['name'])
+            break
+        }
+
+        case 'setuID': {
+            $("#uID").html(data.uID)
+            break
         }
 
         default: {
