@@ -35,16 +35,3 @@ window.addEventListener('message', (e) => {
         }
     }
 })
-
-const sendRequest = (action, data = {}, cb) => {
-    if (typeof(GetParentResourceName) === "function") {
-        $.post(`https://${GetParentResourceName()}/${action}`, JSON.stringify(data), (response, status) => {
-            if (typeof(cb) === "function") {
-                cb(status === "success", response)
-            }
-        })
-    } else {
-        console.log(action)
-        console.log(JSON.stringify(data, null, 4))
-    }
-}
