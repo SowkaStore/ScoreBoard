@@ -1,6 +1,13 @@
 ESX = nil
+PlayerData = {}
 opened = false
 tempPlayers = {}
+scoreboard = {
+    ['police'] = 0,
+    ['ambulance'] = 0,
+    ['mechanic'] = 0,
+    ['players'] = 0
+}
 
 Citizen.CreateThread(function()
     while ESX == nil do
@@ -8,29 +15,26 @@ Citizen.CreateThread(function()
         Wait(100)
     end
 
-    ped = PlayerPedId()
+    PlayerData = ESX.GetPlayerData()
     while true do
+        scoreboard['id'] = GetPlayerServerId(PlayerId())
         if IsControlJustPressed(0, 20) then
             SendNUIMessage({
                 action = 'setuID',
-                uID = ESX.GetPlayerData().uID
+                uID = PlayerData.uID
             })
 
             if not opened then
-
-                ESX.TriggerServerCallback('rc_scoreboard:getData', function(cb)
-                    cb['id'] = GetPlayerServerId(PlayerId())
-                    cb['job'] = ESX.GetPlayerData().job.label
-                    cb['name'] = ESX.GetPlayerData().job.grade_label
-                    SendNUIMessage({
-                        action = 'update',
-                        data = cb
-                    })
-                    SendNUIMessage({
-                        action = 'open'
-                    })
-                    opened = true
-                end)
+                scoreboard['job'] = PlayerData.job.label
+                scoreboard['name'] = PlayerData.job.grade_label
+                SendNUIMessage({
+                    action = 'update',
+                    data = scoreboard
+                })
+                SendNUIMessage({
+                    action = 'open'
+                })
+                opened = true
             end
         elseif IsControlJustReleased(0, 20) then
             if opened then
@@ -51,14 +55,15 @@ Citizen.CreateThread(function()
             end
         end
 
-        Wait(0)
+        Wait(7)
     end
 end)
 
 Citizen.CreateThread(function()
+    playerPed = PlayerPedId()
     while true do
         if opened then
-            tempPlayers = ESX.Game.GetPlayersInArea(GetEntityCoords(ped), 10.0)
+            tempPlayers = ESX.Game.GetPlayersInArea(GetEntityCoords(playerPed), 10.0)
             table.insert(tempPlayers, PlayerId())
             Wait(100)
         else
@@ -66,6 +71,18 @@ Citizen.CreateThread(function()
             Wait(500)
         end
     end
+end)
+
+RegisterNetEvent('esx:playerLoaded', function(data)
+    PlayerData = data
+end)
+
+RegisterNetEvent('esx:setJob', function(job)
+	PlayerData.job = job
+end)
+
+RegisterNetEvent('rc_scoreboard:updateData', function(data)
+    scoreboard = data
 end)
 
 function DrawText3D(x, y, z, text, color)
