@@ -17,6 +17,7 @@ RegisterServerEvent('esx:setJob', function(source, job, last)
         scoreboard[last.name]-=1
         if scoreboard[last.name] < 0 then scoreboard[last.name] = 0 end
     end
+    TriggerClientEvent('rc_scoreboard:updateData', -1, scoreboard)
 end)
 
 AddEventHandler('onResourceStart', function(res)
@@ -30,6 +31,7 @@ AddEventHandler('onResourceStart', function(res)
                 scoreboard[v.job.name]+=1
             end
         end
+        TriggerClientEvent('rc_scoreboard:updateData', -1, scoreboard)
     end
 end)
 
@@ -38,6 +40,7 @@ RegisterServerEvent('esx:playerLoaded', function(id, xPlayer)
         scoreboard[xPlayer.job.name]+=1
     end
     scoreboard['players']+=1
+    TriggerClientEvent('rc_scoreboard:updateData', -1, scoreboard)
 end)
 
 AddEventHandler('playerDropped', function()
@@ -48,8 +51,9 @@ AddEventHandler('playerDropped', function()
     end
     scoreboard['players']-=1
     if scoreboard['players'] < 0 then scoreboard['players'] = 0 end
+    TriggerClientEvent('rc_scoreboard:updateData', -1, scoreboard)
 end)
 
-ESX.RegisterServerCallback('rc_scoreboard:getData', function(source, cb)
-    cb(scoreboard)
-end)
+function update()
+    TriggerClientEvent('rc_scoreboard:updateData', -1, scoreboard)
+end
