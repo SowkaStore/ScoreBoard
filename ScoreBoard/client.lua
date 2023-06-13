@@ -60,10 +60,9 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-    playerPed = PlayerPedId()
     while true do
         if opened then
-            tempPlayers = ESX.Game.GetPlayersInArea(GetEntityCoords(playerPed), 10.0)
+            tempPlayers = ESX.Game.GetPlayersInArea(GetEntityCoords(PlayerPedId()), 10.0)
             table.insert(tempPlayers, PlayerId())
             Wait(100)
         else
