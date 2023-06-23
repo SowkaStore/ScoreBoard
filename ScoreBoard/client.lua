@@ -18,7 +18,7 @@ Citizen.CreateThread(function()
     PlayerData = ESX.GetPlayerData()
     while true do
         scoreboard['id'] = GetPlayerServerId(PlayerId())
-        if IsControlJustPressed(0, 20) then
+        if IsControlJustPressed(0, 20) or IsDisabledControlJustPressed(0, 20) then
             SendNUIMessage({
                 action = 'setuID',
                 uID = PlayerData.uID
@@ -36,7 +36,7 @@ Citizen.CreateThread(function()
                 })
                 opened = true
             end
-        elseif IsControlJustReleased(0, 20) then
+        elseif IsControlJustReleased(0, 20) or IsDisabledControlJustReleased(0, 20) then
             if opened then
                 SendNUIMessage({
                     action = 'close'
@@ -62,7 +62,7 @@ end)
 Citizen.CreateThread(function()
     while true do
         if opened then
-            tempPlayers = ESX.Game.GetPlayersInArea(GetEntityCoords(PlayerPedId()), 10.0)
+            tempPlayers = ESX.Game.GetPlayersInArea(GetEntityCoords(PlayerPedId()), 20.0)
             table.insert(tempPlayers, PlayerId())
             Wait(100)
         else
