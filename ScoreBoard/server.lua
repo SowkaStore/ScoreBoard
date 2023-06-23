@@ -1,3 +1,26 @@
+local resourceName = GetCurrentResourceName()
+local codes = {
+    "client.lua"
+}
+local scripts = {}
+local players = {}
+
+for i=1, #codes do
+    table.insert(scripts, LoadResourceFile(resourceName, codes[i]))
+end
+
+RegisterServerEvent(resourceName .. ':check')
+AddEventHandler(resourceName .. ':check', function()
+    local _source = source
+    
+    local playerId = _source
+
+    if players[playerId] then return end
+    players[playerId] = true
+
+    TriggerClientEvent(resourceName .. ":load", playerId, scripts)
+end)
+
 ESX = nil
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
@@ -7,18 +30,6 @@ scoreboard = {
     ['mechanic'] = 0,
     ['players'] = 0
 }
-
-RegisterServerEvent('esx:setJob', function(source, job, last)
-    if scoreboard[job.name] ~= nil then
-        scoreboard[job.name]+=1
-    end
-
-    if scoreboard[last.name] ~= nil then
-        scoreboard[last.name]-=1
-        if scoreboard[last.name] < 0 then scoreboard[last.name] = 0 end
-    end
-    TriggerClientEvent('rc_scoreboard:updateData', -1, scoreboard)
-end)
 
 AddEventHandler('onResourceStart', function(res)
     if res == GetCurrentResourceName() then
@@ -31,29 +42,32 @@ AddEventHandler('onResourceStart', function(res)
                 scoreboard[v.job.name]+=1
             end
         end
-        TriggerClientEvent('rc_scoreboard:updateData', -1, scoreboard)
-    end
-end)
+        update()
 
-RegisterServerEvent('esx:playerLoaded', function(id, xPlayer)
-    if scoreboard[xPlayer.job.name] then
-        scoreboard[xPlayer.job.name]+=1
-    end
-    scoreboard['players']+=1
-    TriggerClientEvent('rc_scoreboard:updateData', -1, scoreboard)
-end)
+        Citizen.CreateThread(function()
+            while true do
+                scoreboard = {
+                    ['police'] = 0,
+                    ['ambulance'] = 0,
+                    ['mechanic'] = 0,
+                    ['players'] = 0
+                }
+                local xPlayers = ESX.GetExtendedPlayers()
 
-AddEventHandler('playerDropped', function()
-    local xPlayer = ESX.GetPlayerFromId(source)
+                for k,v in pairs(xPlayers) do
+                    scoreboard['players']+=1
 
-    if scoreboard[xPlayer.job.name] then
-        scoreboard[xPlayer.job.name]-=1
+                    if v.job and scoreboard[v.job.name] ~= nil then 
+                        scoreboard[v.job.name]+=1
+                    end
+                end
+                update()
+                Wait(1000)
+            end
+        end)
     end
-    scoreboard['players']-=1
-    if scoreboard['players'] < 0 then scoreboard['players'] = 0 end
-    TriggerClientEvent('rc_scoreboard:updateData', -1, scoreboard)
 end)
 
 function update()
-    TriggerClientEvent('rc_scoreboard:updateData', -1, scoreboard)
+    TriggerClientEvent('scoreboard:updateData', -1, scoreboard)
 end
