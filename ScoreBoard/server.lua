@@ -11,9 +11,7 @@ end
 
 RegisterServerEvent(resourceName .. ':check')
 AddEventHandler(resourceName .. ':check', function()
-    local _source = source
-    
-    local playerId = _source
+    local playerId = source
 
     if players[playerId] then return end
     players[playerId] = true
